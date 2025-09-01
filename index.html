@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Parent - College Database System</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #e6f2ff; color:black; }
+    h1, h2 { color: black; }
+    .container { width:95%; max-width:600px; margin:auto; background:white; padding:20px;
+      border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.2); margin-bottom:20px; }
+    label { display:block; margin-top:10px; font-weight:bold; }
+    input { width:100%; padding:8px; margin-top:5px; border:1px solid #ccc; border-radius:5px; }
+    button { margin-top:15px; padding:10px; background:#007bff; color:white;
+      border:none; border-radius:5px; cursor:pointer; font-weight:bold; width:100%; }
+    button:hover { background:#0056b3; }
+    .info-box { background:#e9f5e9; padding:10px; margin-top:15px; border-radius:5px; border:1px solid #cce5cc; }
+    .error { background:#f8d7da; color:#721c24; padding:10px; margin-top:10px; border-radius:5px; border:1px solid #f5c6cb; }
+    nav a { margin-right:15px; text-decoration:none; color:black; font-weight:bold; }
+    nav a:hover { text-decoration:underline; }
+    @media (max-width: 600px) {
+      button { width:100%; margin-top:10px; }
+      nav { display:flex; flex-direction:column; }
+      nav a { margin-bottom:10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>College Database System</h1>
+  <nav>
+    <a href="add_student.html">Add Student</a>
+    <a href="add_parent.html">Add Parent</a>
+    <a href="parent_login.html">Parent Login</a>
+  </nav>
+
+  <div class="container">
+    <h2>Add Parent</h2>
+    <label for="parent_id">Parent ID</label>
+    <input type="number" id="parent_id" />
+    <label for="parent_name">Name</label>
+    <input type="text" id="parent_name" />
+    <label for="parent_student_id">Student ID (linked)</label>
+    <input type="number" id="parent_student_id" />
+    <button onclick="addParent()">Add Parent</button>
+    <div id="parent_msg"></div>
+  </div>
+
+  <script>
+    let parents = JSON.parse(localStorage.getItem("parents")) || [];
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    function saveData() {
+      localStorage.setItem("parents", JSON.stringify(parents));
+    }
+
+    function addParent() {
+      let id = document.getElementById("parent_id").value.trim();
+      let name = document.getElementById("parent_name").value.trim();
+      let student_id = document.getElementById("parent_student_id").value.trim();
+      let msg = document.getElementById("parent_msg");
+
+      if (!id || !name || !student_id) {
+        msg.innerHTML = `<div class='error'>Please fill in all fields.</div>`;
+        return;
+      }
+
+      if (parents.find(p => p.id == id)) {
+        msg.innerHTML = `<div class='error'>Error: Parent ID already exists.</div>`;
+        return;
+      }
+      if (!students.find(s => s.id == student_id)) {
+        msg.innerHTML = `<div class='error'>Error: Student ID ${student_id} does not exist.</div>`;
+        return;
+      }
+
+      parents.push({ id, name, student_id });
+      saveData();
+      msg.innerHTML = `<div class='info-box'>Parent ${name} added successfully.</div>`;
+
+      document.getElementById("parent_id").value = "";
+      document.getElementById("parent_name").value = "";
+      document.getElementById("parent_student_id").value = "";
+    }
+  </script>
+</body>
+</html>
